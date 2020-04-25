@@ -1,14 +1,15 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-#@file   :run.py
+#@file   :run_android.py
 #@time   :2020/4/16 21:52
 #@Author :jmgen
 #@Version:1.0
 #@Desc   :
-from util.shell import Shell
-from util.utils import Conf,ls_by_key,dir_by_key
-from util.logger import Logger
-from util.envinfo import EnvironmentAndroid
+from common.shell import Shell
+from common.utils import Conf,ls_by_key,dir_by_key
+from common.logger import Logger
+from common.envinfo import EnvironmentAndroid
+from common.envinfo import EnvironmentIOS
 import os,jprops,pytest,logging,platform
 from multiprocessing import Pool
 
@@ -18,9 +19,16 @@ class Run():
     def __init__(self,platform=Conf().androidname):
         self.conf=Conf()
         self.platform=platform
-        self.conf.set_platform(platform) # 设置执行平台
-        self.env=EnvironmentAndroid()
-        self.devices=self.env.devices
+        if(self.platform=='android'):
+            self.conf.set_platform(platform)  # 设置执行平台
+            self.env=EnvironmentAndroid()
+            self.devices=self.env.devices
+        elif(self.platform=='ios'):
+            self.conf.set_platform(platform)  # 设置执行平台
+            self.env = EnvironmentIOS()
+            self.devices = self.env.start_device()
+        else :
+            pass
 
         self.result_path =os.path.join(self.env.path.get("report"),'result')
         self.html_report_path = os.path.join(self.env.path.get("report"),'html')

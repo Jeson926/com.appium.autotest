@@ -10,11 +10,11 @@ from appium.webdriver.common.touch_action import TouchAction
 from selenium.common.exceptions import TimeoutException
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions
-from util.utils import singleton,Waittime_count
-from util.logger import Logger
+from common.utils import singleton,Waittime_count
+from common.logger import Logger
 import allure,time
-from util.verify import NotFoundElementError,NotFoundTextError
-from util.envinfo import EnvironmentAndroid
+from common.verify import NotFoundElementError,NotFoundTextError
+from common.envinfo import EnvironmentAndroid
 
 log = Logger(name=__file__).get_logger()
 
@@ -532,7 +532,6 @@ class ElementActions:
             return driver.find_element_by_android_uiautomator(
                 ui_value) if element else driver.find_elements_by_android_uiautomator(ui_value)
         else:
-            log.info(ltype, value)
             return driver.find_element(ltype, value) if element else driver.find_elements(ltype, value)
 
     def _send_key_event(self, arg, num=0):

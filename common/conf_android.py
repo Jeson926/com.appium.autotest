@@ -5,11 +5,11 @@
 #@Author :jmgen
 #@Version:1.0
 #@Desc   :
-import pytest,os,logging
+import pytest
 from appium import webdriver
-from util.action import ElementActions
-from util.envinfo import EnvironmentAndroid
-from util.logger import Logger
+from common.action import ElementActions
+from common.envinfo import EnvironmentAndroid
+from common.logger import Logger
 
 log = Logger(name=__file__).get_logger()
 #pytest的setup和down工作

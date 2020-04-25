@@ -8,4 +8,5 @@
 class Config:
     platform = {
         'run': 'android',
+        # 'run': 'ios',
     }

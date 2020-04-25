@@ -5,7 +5,7 @@
 #@Author :jmgen
 #@Version:1.0
 #@Desc   :
-from util.page import BasePage
+from common.page import BasePage
 
 class Edit_Account_Page(BasePage):
     name='编辑账户'

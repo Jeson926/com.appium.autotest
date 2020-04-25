@@ -5,8 +5,9 @@
 #@Author :jmgen
 #@Version:1.0
 #@Desc   :
-from util.logger import Logger
+from common.logger import Logger
 import subprocess,os,platform
+log = Logger(name=__file__).get_logger()
 def get_command():
     # 判断是否设置环境变量ANDROID_HOME
     if "ANDROID_HOME" in os.environ:
@@ -19,7 +20,7 @@ def get_command():
             "Adb not found in $ANDROID_HOME path: %s." %
             os.environ["ANDROID_HOME"])
     return command
-log = Logger(name=__file__).get_logger()
+
 #Device类，用get_android_devices返回执行adb devices命令时的devices信息（即获取当前链接的机子devicename）
 class Device:
     @staticmethod
@@ -30,6 +31,15 @@ class Device:
                 device = device.split('\t')[0]
                 android_devices_list.append(device)
         return android_devices_list
+
+    @staticmethod
+    def get_ios_devices():
+        ios_devices_list=[]
+        for device in Shell.invoke('Instruments -s devices').splitlines():
+            if 'device' in device and 'devices' not in device:
+                device = device.split('\t')[0]
+                ios_devices_list.append(device)
+        return ios_devices_list
 
 class Shell:
     @staticmethod

@@ -6,7 +6,7 @@
 #@Version:1.0
 #@Desc   :
 import re
-from util.logger import Logger
+from common.logger import Logger
 
 log = Logger(name=__file__).get_logger()
 class NotFoundElementError(Exception):

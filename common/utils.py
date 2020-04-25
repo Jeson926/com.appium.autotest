@@ -1,14 +1,14 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-# @file   :util.py
+# @file   :common.py
 # @time   :2020/4/16 19:05
 # @Author :jmgen
 # @Version:1.0
 # @Desc   :
 import time, os
 from config.config import Config
-from util.shell import Shell
-from util.logger import Logger
+from common.shell import Shell
+from common.logger import Logger
 
 log = Logger(name=__file__).get_logger()
 # 单例装饰器

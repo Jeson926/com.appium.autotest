@@ -9,7 +9,7 @@ class AccountCaseData():
     addaccount_001 = {
         'case_no': 'addaccount_001',
         'info': '新建一个现金账户',
-        'params': {'account': ['*现金测试账户*'],
+        'params': {'account': ['*现金测试账户*','dsgdj','shdgkdfh'],
                    'data': ['66.84'],
                    'remark': ['#现金测试账户#'],
                    'iconinfo': ['标准'],

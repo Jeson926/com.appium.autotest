@@ -5,16 +5,16 @@
 #@Author :jmgen
 #@Version:1.0
 #@Desc   :
-# import pytest
-from util.utils import Conf
+
+from common.utils import Conf
 # from page.account.set import Account
 
 conf = Conf()
 
 if conf.platform == conf.androidname:
-    from util.conf_android import *
+    from common.conf_android import *
 elif conf.platform == conf.iosname:
-    from util.conf_ios import *
+    from common.conf_ios import *
 
 
 #运行时通过执行的配置的平台决定导入的模块

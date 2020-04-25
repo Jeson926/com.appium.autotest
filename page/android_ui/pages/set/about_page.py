@@ -5,7 +5,7 @@
 #@Author :jmgen
 #@Version:1.0
 #@Desc   :
-from util.page import BasePage
+from common.page import BasePage
 
 class About_Page(BasePage):
     name='关于页面'

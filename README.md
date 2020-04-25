@@ -1,4 +1,4 @@
-## 已解决的痛点
+##基本功能
 1、pageobject分层时,page的组织和层级  
 2、元素定位:通过父节点找子节点、通过子节点确定父节点、找兄弟节点  
 3、多设备分配测试任务运行  
@@ -6,14 +6,13 @@
 5、日志和报告  
 6、业务复用和维护  
 
-
 ## 需要安装的
 ```brew install allure-commandline``` （生成allure报告的工具）  
 
 安装requment.txt里面的第三方包
 
 ```
-selenium==3.141.0
+selenium
 Appium-Python-Client
 pytest
 allure-pytest
@@ -28,9 +27,7 @@ adb shell "dumpsys window w | grep name="  (获取当前页面的Activity)
 
 ```appium --address 0.0.0.0 --port 4723 --log "appium.log" --log-timestamp --local-timezone  --no-reset  --session-override  -U 192.168.56.101:5555```
 
-
 # 快速使用
-
 ### 检测环境：
 在apk中添加要测的app包  
 运行env_check.py检测环境  
@@ -39,7 +36,7 @@ adb shell "dumpsys window w | grep name="  (获取当前页面的Activity)
 **0：分层概念**  
 page集、page类、page类加载方法（load_android、load_ios）、page元素、元素的属性  
 **1、配置文件**  
-路径: 项目/data/config_android.yaml  
+路径: 项目/config/config_android.py  
 需要修改的有：app包路径、appium版本号、devices相关、报告相关路径  
 **2、编写pages**   
  路径： 项目/pages  
@@ -47,35 +44,31 @@ page集、page类、page类加载方法（load_android、load_ios）、page元�
 注释：最好在page集合类中添加page的层级关系的注释  
 
 ```
-#pageset.py
-from .productpage import *
-
-class ProductPages:
-    特卖首页=HomePage()
-    分类列表搜索页=CategoryListPage()        #上级页为 特卖首页
-    搜索后列表页=SearchListPage()             #上级页为 分类列表搜索页
-    商品详情页=ProductDetailsPage()
+#pageaction.py
+from page.android_ui.pages.account.add_account_page import Add_Account_Page
+class Account:
+    add_account=Add_Account_Page()
+    def sub_into_account(self,action):
+        action.click(self.add_account.account)
+    def sub_into_cash(self,action):
+        action.click(self.add_account.add)
+        action.click(self.add_account.cash)
 ```
-
-**创建page类**(继承basepage类)，必填属性：name ，实现基类方法：load_android、load_ios （先不用这个） 
- 
+**创建page类**(继承basepage类)，必填属性：name ，实现基类方法：load_android、load_ios
 **load_android格式**：  
  ```
-#productpage.py
-from base.page import BasePage,get_locator
-
-class CategoryListPage(BasePage):
-
-    name="分类列表搜索页"
+from common.page import BasePage
+from selenium.webdriver.common.by import By
+class Add_Account_Page(BasePage):
+    name='添加新账户'
 
     def load_android(self):
-        self.activity="com.jumei.list.category.CategoryListActivity"
-
-        self.搜索输入框=get_locator(self.name,"搜索输入框",'id','com.jm.android.jumei:id/search_input')
-        self.搜索按钮=get_locator(self.name,"搜索按钮",'id','com.jm.android.jumei:id/search_bt')
+        self.account=self.get_locator('首页账户',By.XPATH, self.button_text("账户"),page='首页')
+        self.add = self.get_locator('添加',By.XPATH, self.text_view_desc("添加"),page='账户首页')
+        self.cash = self.get_locator('现金', By.XPATH, self.text_view_text("现金"))
+        self.account_name=self.get_locator('账户名',By.ID, "com.mymoney:id/name_et", page='账户添加页的账户名')
+        self.create=self.get_locator('确认新建',By.XPATH, self.button_text("确认新建"), page='账户添加页的确认新建')
 ```
-get_locator方法返回元素实例（dict），元素包含有属性：page名、元素名、元素定位方式、定位参数、是否是动态（默认为静态），传参时一般只需要传page名、元素名、元素定位方式、定位参数  
-
 **3、编写用例**： 
 路径： 项目/test/test_用例组名.py  
 **上下文**：  
@@ -87,36 +80,34 @@ get_locator方法返回元素实例（dict），元素包含有属性：page名�
 
 **基础用例**：  
 ```
-#test_home.py
-from base.action import ElementActions
-from pages.pageset import ProductPages as p
-from base.utils import log
+import allure,pytest
+from common.action import ElementActions
+from page.android_ui.actions.account import Account
+from data.account_casedata import  AccountCaseData as data
 
-class TestLogin():
+@allure.feature("添加账户模块")
+@allure.description('账户添加成功')
+class Test_Add_Account(Account):
+    @allure.story('现金账户名称正常，添加成功')
+    @allure.severity(allure.severity_level.NORMAL)
+    @pytest.mark.parametrize('account_name',
+                             data.addaccount_001.get('params').get('account'))
+    def test_addaccount_001(self, action: ElementActions,account_name,):
+        self.sub_into_account(action)
+        self.sub_into_cash(action)
+        # action.input_text(self.add_account.account_name,data.addaccount_001.get('params').get('account'))
+        action.input_text(self.add_account.account_name,account_name)
+        action.click(self.add_account.create)
 
-
-    def test_home(self, action: ElementActions):
-
-        action.sleep(8)
-
-        action.start_activity(p.特卖首页.activity)\
-            .sleep(4)\
-            .click(p.特卖首页.搜索输入框)
-
-        action.text(p.分类列表搜索页.搜索输入框,"迪奥口红")\
-            .click(p.分类列表搜索页.搜索按钮)
-
-        action.click(p.搜索后列表页.第一个商品项)
-        for count in range(20):
-            if action.swip_down().is_text_displayed("商品参数"):
-                break
-
-        if action.is_text_displayed("迪奥") ==False:
-            raise NotFoundTextError
-        action.sleep(1)
+    @allure.story('银行卡账户名称正常，添加成功')
+    def test_addaccount_002(self, action: ElementActions):
+        # action.click(Account.add_account.account)
+        self.sub_into_account(action)
+        action.click(self.add_account.add)
+        action.click(self.add_account.cash)
+        action.input_text(self.add_account.account_name, data.addaccount_002.get('params').get('account'))
+        action.click(self.add_account.create)
 ```
-
-
 **action封装方法原理**：  
 click实际就是传入 页面元素参数 ，通过driver.find_element找到后再执行点击事件  
 text 通过driver.find_element找到后再执行send_key  
@@ -128,13 +119,10 @@ is_text_displayed : 判断当前页面是否有对应传参文本
 2、run all case:  
     ```python3 run.py```  
 run one module case:   
-    ```python3 run.py test/test_home.py```  
+    ```python3 run.py testcase/test_home.py```  
 run case with key word:  
     ```python3 run.py -k <keyword>```  
 run class case:  
-    ```python3 run.py  test/test_demo.py::Test_demo```  
+    ```python3 run.py  testcase/test_demo.py::Test_demo```  
 run class::method case:  
-    ```python3 run.py  test/test_demo.py::Test_demo::test_home```  
-
-### 待完善
-ios兼容
+    ```python3 run.py  testcase/test_demo.py::Test_demo::test_home```  

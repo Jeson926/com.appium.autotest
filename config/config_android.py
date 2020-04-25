@@ -7,7 +7,7 @@
 # @Desc   :
 class Config_Android:
     appium = {
-        'app': 'apk',
+        # 'app': 'apk',
         'appPackage': 'com.mymoney',
         'appActivity': '.biz.main.v12.MainActivityV12',
         'appiumversion': '1.15.1',
@@ -15,7 +15,7 @@ class Config_Android:
     }
     devices = {
         'device1': {
-            "deviceName": 'C7RGK16A18900656',
+            "deviceName": '8e4ecce5',
             'platformName': 'Android',
             'platformVersion': '7.1.2',
             'appiumserver': 'http://localhost:4723/wd/hub',

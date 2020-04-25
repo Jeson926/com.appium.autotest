@@ -5,9 +5,9 @@
 #@Author :jmgen
 #@Version:1.0
 #@Desc   :
-from util.utils import Conf,get_attrsname
-from util.logger import Logger
-from util.action import ElementActions
+from common.utils import Conf,get_attrsname
+from common.logger import Logger
+from common.action import ElementActions
 import abc
 
 log = Logger(name=__file__).get_logger()

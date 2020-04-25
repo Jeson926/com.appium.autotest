@@ -5,7 +5,7 @@
 #@Author :jmgen
 #@Version:1.0
 #@Desc   :
-from util.page import BasePage
+from common.page import BasePage
 from selenium.webdriver.common.by import By
 class Add_Account_Page(BasePage):
     name='添加新账户'
